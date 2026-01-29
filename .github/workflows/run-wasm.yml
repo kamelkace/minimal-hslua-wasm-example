@@ -10,6 +10,17 @@ jobs:
   run-wasm:
     runs-on: ubuntu-latest
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+      
       - uses: actions/checkout@v4
       
       - name: Install Nix
@@ -17,6 +28,12 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
+      
+      - name: Cache Nix store
+        uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
       
       - name: Run script in flake environment
         run: |
