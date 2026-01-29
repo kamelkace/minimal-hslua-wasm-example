@@ -2,22 +2,38 @@ name: Run WASM Script
 
 on:
   push:
-    branches: [ main ]
+    branches: [ add-github-action ]
   pull_request:
-    branches: [ main ]
+    branches: [ add-github-action ]
 
 jobs:
   run-wasm:
     runs-on: ubuntu-latest
-    container:
-      image: nixos/nix:latest
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+      
       - uses: actions/checkout@v4
       
-      - name: Enable flakes
-        run: |
-          mkdir -p ~/.config/nix
-          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+      - name: Install Nix
+        uses: cachix/install-nix-action@v24
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      
+      - name: Cache Nix store
+        uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
       
       - name: Run script in flake environment
         run: |
