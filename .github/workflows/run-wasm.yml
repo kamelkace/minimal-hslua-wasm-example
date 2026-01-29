@@ -2,9 +2,9 @@ name: Run WASM Script
 
 on:
   push:
-    branches: [ add-github-action ]
+    branches: [ main ]
   pull_request:
-    branches: [ add-github-action ]
+    branches: [ main ]
 
 jobs:
   run-wasm:
