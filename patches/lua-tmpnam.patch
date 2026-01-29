@@ -1,0 +1,16 @@
+--- a/lua/cbits/lua-5.4.8/loslib.c
++++ b/lua/cbits/lua-5.4.8/loslib.c
+@@ -101,7 +101,12 @@
+ */
+ #if !defined(lua_tmpnam)	/* { */
+ 
+-#if defined(LUA_USE_POSIX)	/* { */
++#if defined(LUA_STUB_TMPNAM) /* { */
++
++#define LUA_TMPNAMBUFSIZE	32
++#define lua_tmpnam(b,e) { e = 1; }
++
++#elif defined(LUA_USE_POSIX)	/* }{ */
+ 
+ #include <unistd.h>
+ 

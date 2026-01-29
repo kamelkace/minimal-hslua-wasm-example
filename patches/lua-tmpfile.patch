@@ -1,0 +1,17 @@
+--- a/lua/cbits/lua-5.4.8/liolib.c
++++ b/lua/cbits/lua-5.4.8/liolib.c
+@@ -301,10 +301,14 @@
+ 
+ 
+ static int io_tmpfile (lua_State *L) {
++#if defined(LUA_STUB_TMPFILE)
++  return 1;
++#else
+   LStream *p = newfile(L);
+   errno = 0;
+   p->f = tmpfile();
+   return (p->f == NULL) ? luaL_fileresult(L, 0, NULL) : 1;
++#endif
+ }
+ 
+ 
