@@ -1,0 +1,24 @@
+name: Run WASM Script
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-wasm:
+    runs-on: ubuntu-latest
+    container:
+      image: nixos/nix:latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Enable flakes
+        run: |
+          mkdir -p ~/.config/nix
+          echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+      
+      - name: Run script in flake environment
+        run: |
+          nix develop --command bash ./run-wasm.sh
